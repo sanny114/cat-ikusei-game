@@ -1,0 +1,55 @@
+- main [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]: 肉球
+        - generic [ref=e7]:
+          - generic [ref=e8]:
+            - generic [ref=e9]: なまえ：
+            - generic [ref=e10]: ミルク
+            - button "変更" [ref=e11]
+          - generic [ref=e12]:
+            - generic [ref=e13]: レベル：
+            - generic [ref=e14]: "1"
+          - generic [ref=e17]:
+            - generic [ref=e18]: 気分：
+            - generic [ref=e19]: ふつう
+      - generic [ref=e20]:
+        - paragraph [ref=e21]: 今日もお世話してね。
+        - generic [ref=e22]: ฅ ねこ
+    - generic [ref=e23]:
+      - generic [ref=e24]: ♡
+      - img "中央の猫" [ref=e25]
+      - generic [ref=e26]: 〃
+    - generic [ref=e27]:
+      - generic [ref=e28]:
+        - generic [ref=e29]: 満腹
+        - generic [ref=e32]: "55"
+      - generic [ref=e33]:
+        - generic [ref=e34]: 清潔
+        - generic [ref=e37]: "55"
+      - generic [ref=e38]:
+        - generic [ref=e39]: 体力
+        - generic [ref=e42]: "55"
+    - navigation "お世話メニュー" [ref=e43]:
+      - button "ごはん" [ref=e44] [cursor=pointer]:
+        - generic [ref=e45]: ごはん
+      - button "おふろ" [ref=e46] [cursor=pointer]:
+        - generic [ref=e47]: おふろ
+      - button "散歩" [ref=e48] [cursor=pointer]:
+        - generic [ref=e49]: 散歩
+      - button "遊ぶ" [ref=e50] [cursor=pointer]:
+        - generic [ref=e51]: 遊ぶ
+      - button "図鑑" [ref=e52] [cursor=pointer]:
+        - generic [ref=e53]: 図鑑
+    - generic [ref=e55]:
+      - heading "ねこ図鑑" [level=2] [ref=e56]
+      - paragraph [ref=e57]: 発見したねこ：1 / 6
+    - generic [ref=e58]:
+      - button "ホーム" [ref=e59] [cursor=pointer]:
+        - img "ホーム" [ref=e60]
+      - generic [ref=e61]:
+        - generic [ref=e62]: 毛糸
+        - generic [ref=e63]: ・・・・・
+      - button "設定" [ref=e64] [cursor=pointer]:
+        - img "設定" [ref=e65]
