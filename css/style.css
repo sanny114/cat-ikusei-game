@@ -761,3 +761,80 @@ button {
   height: 64px;
   object-fit: contain;
 }
+
+/* タブレット・PC向け3カラムレイアウト */
+
+@media (min-width: 768px) {
+  .app {
+    align-items: flex-start;
+    padding: 32px 16px;
+  }
+
+  .phone-screen {
+    width: min(94vw, 980px);
+    min-height: auto;
+    display: grid;
+    grid-template-columns: 1fr 1.3fr 1fr;
+    grid-template-areas:
+      "book main status"
+      "book meters action"
+      "bottom bottom bottom";
+    gap: 16px;
+    align-content: start;
+  }
+
+  .status-area {
+    grid-area: status;
+    grid-template-columns: 1fr;
+    min-width: 0;
+  }
+
+  .main-area {
+    grid-area: main;
+    margin-top: 0;
+    min-width: 0;
+  }
+
+  .main-cat-image {
+    width: 68%;
+    max-width: 240px;
+  }
+
+  .heart-doodle,
+  .sparkle-doodle {
+    display: none;
+  }
+
+  .name-line {
+    flex-wrap: wrap;
+  }
+
+  .cat-name {
+    max-width: 120px;
+  }
+
+  .meters-area {
+    grid-area: meters;
+    align-content: start;
+    min-width: 0;
+  }
+
+  .action-area {
+    grid-area: action;
+    grid-template-columns: repeat(3, 1fr);
+    align-content: start;
+    min-width: 0;
+  }
+
+  .book-preview {
+    grid-area: book;
+    margin-top: 0;
+    min-width: 0;
+  }
+
+  .bottom-nav {
+    grid-area: bottom;
+    margin-top: 0;
+    min-width: 0;
+  }
+}
