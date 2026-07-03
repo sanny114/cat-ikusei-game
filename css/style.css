@@ -665,7 +665,7 @@ button {
 
 /* 横幅が狭い端末 */
 
-@media (max-width: 370px) {
+@media (max-width: 400px) {
   .status-area {
     grid-template-columns: 1fr 92px;
     gap: 8px;
