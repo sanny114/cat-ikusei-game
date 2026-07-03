@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ねこ育成ゲーム</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <main class="app">
+    <section class="phone-screen">
+
+      <header class="status-area">
+        <div class="status-card">
+          <div class="paw-mark">肉球</div>
+
+          <div class="status-lines">
+            <div class="status-line name-line">
+              <span class="label">なまえ：</span>
+              <span id="catName" class="cat-name">ミルク</span>
+              <button class="rename-btn" type="button" onclick="renameCat()">変更</button>
+            </div>
+
+            <div class="status-line">
+              <span class="label">レベル：</span>
+              <span id="level">1</span>
+              <div class="level-bar">
+                <span id="expBar"></span>
+              </div>
+            </div>
+
+            <div class="status-line">
+              <span class="label">気分：</span>
+              <span id="mood">ふつう</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="memo-card">
+          <p id="message">今日もお世話してね。</p>
+          <div class="memo-cat">ねこ</div>
+        </div>
+      </header>
+
+      <section class="main-area">
+        <div class="heart-doodle">♡</div>
+
+        <img
+          id="mainCatImage"
+          class="main-cat-image"
+          src="assets/cats/main_cat.png"
+          alt="中央の猫"
+        />
+
+        <div class="sparkle-doodle">〃</div>
+      </section>
+
+      <section class="meters-area">
+        <div class="meter">
+          <span class="meter-label">満腹</span>
+          <div class="meter-bar">
+            <span id="hungerBar"></span>
+          </div>
+          <span id="hungerText" class="meter-value">55</span>
+        </div>
+
+        <div class="meter">
+          <span class="meter-label">清潔</span>
+          <div class="meter-bar">
+            <span id="cleanBar"></span>
+          </div>
+          <span id="cleanText" class="meter-value">55</span>
+        </div>
+
+        <div class="meter">
+          <span class="meter-label">体力</span>
+          <div class="meter-bar">
+            <span id="energyBar"></span>
+          </div>
+          <span id="energyText" class="meter-value">55</span>
+        </div>
+      </section>
+
+      <nav class="action-area" aria-label="お世話メニュー">
+        <button class="action-btn food" type="button" onclick="care('food')">
+          <span class="action-label">ごはん</span>
+          <img src="assets/actions/food_bowl.png" alt="" />
+        </button>
+
+        <button class="action-btn bath" type="button" onclick="care('bath')">
+          <span class="action-label">おふろ</span>
+          <img src="assets/actions/bath.png" alt="" />
+        </button>
+
+        <button class="action-btn walk" type="button" onclick="care('walk')">
+          <span class="action-label">散歩</span>
+          <img src="assets/actions/walk.png" alt="" />
+        </button>
+
+        <button class="action-btn play" type="button" onclick="care('play')">
+          <span class="action-label">遊ぶ</span>
+          <img src="assets/actions/play_yarn.png" alt="" />
+        </button>
+
+        <button class="action-btn book-btn" type="button" onclick="openBook()">
+          <span class="action-label">図鑑</span>
+          <img src="assets/actions/encyclopedia_book.png" alt="" />
+        </button>
+      </nav>
+
+      <section class="book-preview">
+        <div class="book-title-row">
+          <h2>ねこ図鑑</h2>
+          <p>発見したねこ：<span id="discoveredCount">1</span> / <span id="totalCount">6</span></p>
+        </div>
+
+        <div id="bookGrid" class="book-grid">
+        </div>
+      </section>
+
+      <footer class="bottom-nav">
+        <button class="bottom-icon-btn" type="button">
+          <img src="assets/ui/home_icon.png" alt="ホーム" />
+        </button>
+
+        <div class="bottom-center-doodle">
+          <span class="yarn-line">毛糸</span>
+          <span class="paw-trail">・・・・・</span>
+        </div>
+
+        <button class="bottom-icon-btn" type="button">
+          <img src="assets/ui/settings_gear.png" alt="設定" />
+        </button>
+      </footer>
+    </section>
+  </main>
+
+  <section id="bookModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" onclick="closeBook()"></div>
+
+    <div class="modal-panel">
+      <div class="modal-head">
+        <h2>出会った猫図鑑</h2>
+        <button type="button" class="close-btn" onclick="closeBook()">閉じる</button>
+      </div>
+
+      <p class="modal-lead">
+        散歩や遊びで出会った猫が登録されます。未登録の猫はシルエットで表示されます。
+      </p>
+
+      <div id="modalBookGrid" class="book-grid modal-book-grid">
+      </div>
+    </div>
+  </section>
+
+  <script src="js/game.js"></script>
+</body>
+</html>
