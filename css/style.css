@@ -693,3 +693,30 @@ button {
     height: 44px;
   }
 }
+/* 猫発見ポップアップ */
+
+.found-panel {
+  text-align: center;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 22px 16px;
+}
+
+.found-panel h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.found-cat-img {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+}
+
+.found-cat-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 900;
+}

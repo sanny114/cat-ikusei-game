@@ -146,11 +146,22 @@
       </div>
 
       <p class="modal-lead">
-        散歩や遊びで出会った猫が登録されます。未登録の猫はシルエットで表示されます。
+        散歩で出会った猫が登録されます。未登録の猫はシルエットで表示されます。
       </p>
 
       <div id="modalBookGrid" class="book-grid modal-book-grid">
       </div>
+    </div>
+  </section>
+
+  <section id="catFoundModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" onclick="closeCatFound()"></div>
+
+    <div class="modal-panel found-panel">
+      <h2>あたらしいねこに出会った！</h2>
+      <img id="foundCatImage" class="found-cat-img" src="" alt="出会った猫" />
+      <p id="foundCatName" class="found-cat-name"></p>
+      <button type="button" class="close-btn" onclick="closeCatFound()">ずかんにとうろく！</button>
     </div>
   </section>
 

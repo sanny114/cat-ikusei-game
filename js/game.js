@@ -57,6 +57,8 @@ function render() {
   document.getElementById("cleanText").textContent = state.clean;
   document.getElementById("energyBar").style.width = state.energy + "%";
   document.getElementById("energyText").textContent = state.energy;
+
+  renderBook();
 }
 
 function showMessage(text) {
@@ -125,6 +127,7 @@ function care(type) {
     state.hunger = clamp(state.hunger - 10);
     state.mood = clamp(state.mood + 15);
     finishCare("walk", 8);
+    tryEncounter();
   } else if (type === "play") {
     if (state.energy < 10) {
       showMessage("つかれてるみたい…ごはんか休けいがひつようだよ");
@@ -133,6 +136,70 @@ function care(type) {
     state.energy = clamp(state.energy - 10);
     state.mood = clamp(state.mood + 15);
     finishCare("play", 8);
+  }
+}
+
+const CATS = [
+  { id: "milk", name: "ミルク", img: "assets/cats/main_cat.png" },
+  { id: "gray_tabby", name: "グレーのトラねこ", img: "assets/cats/gray_tabby_cat.png" },
+  { id: "white_fluffy", name: "まっしろもふもふ", img: "assets/cats/white_fluffy_cat.png" },
+  { id: "brown_tabby", name: "茶トラ", img: "assets/cats/brown_tabby_cat.png" },
+  { id: "black", name: "黒ねこ", img: "assets/cats/black_cat.png" },
+  { id: "hachiware", name: "ハチワレ", img: "assets/cats/hachiware_cat.png" },
+];
+const SILHOUETTE_IMG = "assets/cats/hidden_cat_silhouette.png";
+
+function renderBook() {
+  document.getElementById("discoveredCount").textContent = state.discovered.length;
+  document.getElementById("totalCount").textContent = CATS.length;
+
+  const html = CATS.map(function (cat) {
+    const found = state.discovered.includes(cat.id);
+    return (
+      '<div class="book-entry' + (found ? " registered" : "") + '">' +
+      '<img src="' + (found ? cat.img : SILHOUETTE_IMG) + '" alt="" />' +
+      '<div class="book-entry-name">' + (found ? cat.name : "？？？") + "</div>" +
+      "</div>"
+    );
+  }).join("");
+
+  document.getElementById("bookGrid").innerHTML = html;
+  document.getElementById("modalBookGrid").innerHTML = html;
+}
+
+function openBook() {
+  document.getElementById("bookModal").classList.add("open");
+}
+
+function closeBook() {
+  document.getElementById("bookModal").classList.remove("open");
+}
+
+function encounterChance() {
+  return Math.min(0.25 + state.level * 0.02, 0.5);
+}
+
+function tryEncounter() {
+  const hidden = CATS.filter(function (cat) {
+    return !state.discovered.includes(cat.id);
+  });
+  if (hidden.length === 0) return;
+  if (Math.random() >= encounterChance()) return;
+
+  const cat = hidden[Math.floor(Math.random() * hidden.length)];
+  state.discovered.push(cat.id);
+  save();
+  render();
+
+  document.getElementById("foundCatImage").src = cat.img;
+  document.getElementById("foundCatName").textContent = cat.name;
+  document.getElementById("catFoundModal").classList.add("open");
+}
+
+function closeCatFound() {
+  document.getElementById("catFoundModal").classList.remove("open");
+  if (state.discovered.length === CATS.length) {
+    showMessage("ずかんコンプリート！すごい！");
   }
 }
 
