@@ -133,9 +133,7 @@ function care(type) {
       showMessage("つかれてるみたい…ごはんか休けいがひつようだよ");
       return;
     }
-    state.energy = clamp(state.energy - 10);
-    state.mood = clamp(state.mood + 15);
-    finishCare("play", 8);
+    openToyModal();
   }
 }
 
@@ -200,6 +198,62 @@ function closeCatFound() {
   document.getElementById("catFoundModal").classList.remove("open");
   if (state.discovered.length === CATS.length) {
     showMessage("ずかんコンプリート！すごい！");
+  }
+}
+
+const TOYS = [
+  { id: "yarn", name: "毛糸玉", mood: 15, img: "assets/actions/play_yarn.png" },
+  { id: "teaser", name: "ねこじゃらし", mood: 20, img: "assets/actions/toy_teaser.png" },
+  { id: "ball", name: "ボール", mood: 20, img: "assets/actions/toy_ball.png" },
+  { id: "mouse", name: "ねずみのおもちゃ", mood: 25, img: "assets/actions/toy_mouse.png" },
+];
+const TOY_DROP_RATE = 0.3;
+
+function openToyModal() {
+  const owned = TOYS.filter(function (toy) {
+    return state.toys.includes(toy.id);
+  });
+  document.getElementById("toyGrid").innerHTML = owned
+    .map(function (toy) {
+      return (
+        '<button type="button" class="toy-btn" onclick="playWithToy(\'' +
+        toy.id +
+        "')\">" +
+        '<img src="' + toy.img + '" alt="" />' +
+        "<span>" + toy.name + "</span>" +
+        "</button>"
+      );
+    })
+    .join("");
+  document.getElementById("toyModal").classList.add("open");
+}
+
+function closeToyModal() {
+  document.getElementById("toyModal").classList.remove("open");
+}
+
+function tryToyDrop() {
+  const missing = TOYS.filter(function (toy) {
+    return !state.toys.includes(toy.id);
+  });
+  if (missing.length === 0) return null;
+  if (Math.random() >= TOY_DROP_RATE) return null;
+  const toy = missing[Math.floor(Math.random() * missing.length)];
+  state.toys.push(toy.id);
+  return toy;
+}
+
+function playWithToy(toyId) {
+  closeToyModal();
+  const toy = TOYS.find(function (t) {
+    return t.id === toyId;
+  });
+  state.energy = clamp(state.energy - 10);
+  state.mood = clamp(state.mood + toy.mood);
+  const newToy = tryToyDrop();
+  finishCare("play", 8);
+  if (newToy) {
+    showMessage("あそんでいたら「" + newToy.name + "」をみつけた！");
   }
 }
 

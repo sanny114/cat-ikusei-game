@@ -720,3 +720,36 @@ button {
   font-size: 18px;
   font-weight: 900;
 }
+
+/* 道具選択モーダル */
+
+.toy-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.toy-btn {
+  min-height: 118px;
+  border: 3px solid var(--ink);
+  border-radius: 16px;
+  background: #fff8e9;
+  box-shadow: 3px 3px 0 var(--shadow);
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.toy-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--shadow);
+}
+
+.toy-btn img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}

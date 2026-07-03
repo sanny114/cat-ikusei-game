@@ -165,6 +165,19 @@
     </div>
   </section>
 
+  <section id="toyModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" onclick="closeToyModal()"></div>
+
+    <div class="modal-panel">
+      <div class="modal-head">
+        <h2>どれであそぶ？</h2>
+        <button type="button" class="close-btn" onclick="closeToyModal()">やめる</button>
+      </div>
+
+      <div id="toyGrid" class="book-grid toy-grid"></div>
+    </div>
+  </section>
+
   <script src="js/game.js"></script>
 </body>
 </html>
