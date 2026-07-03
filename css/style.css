@@ -220,6 +220,7 @@ button {
 
 .memo-card p {
   margin: 0;
+  padding-top: 16px;
   font-size: 13px;
   line-height: 1.45;
   font-weight: 800;
@@ -460,6 +461,13 @@ button {
   border-style: solid;
   border-color: #c99542;
   background: #fff8e9;
+  cursor: pointer;
+}
+
+.book-entry.main-selected {
+  border-color: var(--pink);
+  border-width: 3px;
+  box-shadow: 2px 2px 0 var(--shadow);
 }
 
 .book-entry img {
