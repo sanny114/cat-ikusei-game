@@ -265,6 +265,21 @@ function renameCat() {
   render();
 }
 
+function goHome() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function resetGame() {
+  if (!confirm("さいしょからやりなおす？（いままでのきろくはきえます）")) {
+    return;
+  }
+  localStorage.removeItem(SAVE_KEY);
+  state = defaultState();
+  save();
+  render();
+  showMessage("あたらしいねことのせいかつがはじまるよ！");
+}
+
 load();
 render();
 setInterval(tick, 20000);
