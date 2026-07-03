@@ -74,6 +74,76 @@ function tick() {
   render();
 }
 
+const CARE_MESSAGES = {
+  food: ["もぐもぐ…おいしい！", "おなかいっぱいだにゃ", "ごはんだいすき！"],
+  bath: ["さっぱりしたにゃ！", "ぴかぴかになったよ", "いいにおいだにゃ"],
+  walk: ["おさんぽたのしい！", "いいてんきだにゃ", "とことこ…"],
+  play: ["きゃっきゃっ！たのしい！", "もっとあそぼ！", "うれしいにゃ！"],
+};
+
+function randomMessage(type) {
+  const list = CARE_MESSAGES[type];
+  return list[Math.floor(Math.random() * list.length)];
+}
+
+function gainExp(amount) {
+  state.exp += amount;
+  let leveledUp = false;
+  while (state.exp >= expToNext()) {
+    state.exp -= expToNext();
+    state.level += 1;
+    leveledUp = true;
+  }
+  return leveledUp;
+}
+
+function finishCare(type, exp) {
+  const leveledUp = gainExp(exp);
+  showMessage(
+    leveledUp
+      ? "レベルアップ！レベル" + state.level + "になったよ！"
+      : randomMessage(type)
+  );
+  save();
+  render();
+}
+
+function care(type) {
+  if (type === "food") {
+    state.hunger = clamp(state.hunger + 30);
+    state.energy = clamp(state.energy + 10);
+    finishCare("food", 5);
+  } else if (type === "bath") {
+    state.clean = clamp(state.clean + 30);
+    finishCare("bath", 5);
+  } else if (type === "walk") {
+    if (state.energy < 15) {
+      showMessage("つかれてるみたい…ごはんか休けいがひつようだよ");
+      return;
+    }
+    state.energy = clamp(state.energy - 15);
+    state.hunger = clamp(state.hunger - 10);
+    state.mood = clamp(state.mood + 15);
+    finishCare("walk", 8);
+  } else if (type === "play") {
+    if (state.energy < 10) {
+      showMessage("つかれてるみたい…ごはんか休けいがひつようだよ");
+      return;
+    }
+    state.energy = clamp(state.energy - 10);
+    state.mood = clamp(state.mood + 15);
+    finishCare("play", 8);
+  }
+}
+
+function renameCat() {
+  const newName = prompt("ねこのなまえをおしえてね（8文字まで）", state.name);
+  if (!newName || newName.trim() === "") return;
+  state.name = newName.trim().slice(0, 8);
+  save();
+  render();
+}
+
 load();
 render();
 setInterval(tick, 20000);
