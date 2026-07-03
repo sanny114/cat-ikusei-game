@@ -205,7 +205,7 @@ const TOYS = [
   { id: "yarn", name: "毛糸玉", mood: 15, img: "assets/actions/play_yarn.png" },
   { id: "teaser", name: "ねこじゃらし", mood: 20, img: "assets/actions/toy_teaser.png" },
   { id: "ball", name: "ボール", mood: 20, img: "assets/actions/toy_ball.png" },
-  { id: "mouse", name: "ねずみのおもちゃ", mood: 25, img: "assets/actions/toy_mouse.png" },
+  { id: "mouse", name: "ぬいぐるみ", mood: 25, img: "assets/actions/toy_mouse.png" },
 ];
 const TOY_DROP_RATE = 0.3;
 
