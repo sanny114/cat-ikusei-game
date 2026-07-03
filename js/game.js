@@ -16,6 +16,7 @@ function defaultState() {
     mood: 50,
     discovered: ["milk"],
     toys: ["yarn"],
+    mainCatId: "milk",
   };
 }
 
@@ -57,6 +58,11 @@ function render() {
   document.getElementById("cleanText").textContent = state.clean;
   document.getElementById("energyBar").style.width = state.energy + "%";
   document.getElementById("energyText").textContent = state.energy;
+
+  const mainCat = CATS.find(function (cat) {
+    return cat.id === state.mainCatId;
+  });
+  document.getElementById("mainCatImage").src = mainCat.img;
 
   renderBook();
 }
@@ -114,6 +120,7 @@ function care(type) {
   if (type === "food") {
     state.hunger = clamp(state.hunger + 30);
     state.energy = clamp(state.energy + 10);
+    state.clean = clamp(state.clean - 5);
     finishCare("food", 5);
   } else if (type === "bath") {
     state.clean = clamp(state.clean + 30);
@@ -125,6 +132,7 @@ function care(type) {
     }
     state.energy = clamp(state.energy - 15);
     state.hunger = clamp(state.hunger - 10);
+    state.clean = clamp(state.clean - 10);
     state.mood = clamp(state.mood + 15);
     finishCare("walk", 8);
     tryEncounter();
@@ -153,8 +161,12 @@ function renderBook() {
 
   const html = CATS.map(function (cat) {
     const found = state.discovered.includes(cat.id);
+    const isMain = cat.id === state.mainCatId;
+    const classes =
+      "book-entry" + (found ? " registered" : "") + (isMain ? " main-selected" : "");
+    const onclick = found ? ' onclick="selectMainCat(\'' + cat.id + '\')"' : "";
     return (
-      '<div class="book-entry' + (found ? " registered" : "") + '">' +
+      '<div class="' + classes + '"' + onclick + ">" +
       '<img src="' + (found ? cat.img : SILHOUETTE_IMG) + '" alt="" />' +
       '<div class="book-entry-name">' + (found ? cat.name : "？？？") + "</div>" +
       "</div>"
@@ -163,6 +175,17 @@ function renderBook() {
 
   document.getElementById("bookGrid").innerHTML = html;
   document.getElementById("modalBookGrid").innerHTML = html;
+}
+
+function selectMainCat(catId) {
+  if (catId === state.mainCatId) return;
+  const cat = CATS.find(function (c) {
+    return c.id === catId;
+  });
+  if (!confirm(cat.name + "をメインのねこにする？")) return;
+  state.mainCatId = catId;
+  save();
+  render();
 }
 
 function openBook() {
@@ -249,6 +272,7 @@ function playWithToy(toyId) {
     return t.id === toyId;
   });
   state.energy = clamp(state.energy - 10);
+  state.clean = clamp(state.clean - 8);
   state.mood = clamp(state.mood + toy.mood);
   const newToy = tryToyDrop();
   finishCare("play", 8);
