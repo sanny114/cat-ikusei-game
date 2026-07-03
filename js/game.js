@@ -7,7 +7,6 @@ let state = defaultState();
 
 function defaultState() {
   return {
-    name: "ミルク",
     level: 1,
     exp: 0,
     hunger: 55,
@@ -17,6 +16,7 @@ function defaultState() {
     discovered: ["milk"],
     toys: ["yarn"],
     mainCatId: "milk",
+    catNames: {},
   };
 }
 
@@ -31,7 +31,11 @@ function save() {
 function load() {
   const data = localStorage.getItem(SAVE_KEY);
   if (data) {
-    state = Object.assign(defaultState(), JSON.parse(data));
+    const saved = JSON.parse(data);
+    state = Object.assign(defaultState(), saved);
+    if (saved.name && !saved.catNames) {
+      state.catNames[state.mainCatId] = saved.name;
+    }
   }
 }
 
@@ -46,7 +50,7 @@ function moodLabel() {
 }
 
 function render() {
-  document.getElementById("catName").textContent = state.name;
+  document.getElementById("catName").textContent = getCatName(state.mainCatId);
   document.getElementById("level").textContent = state.level;
   document.getElementById("expBar").style.width =
     Math.round((state.exp / expToNext()) * 100) + "%";
@@ -155,6 +159,14 @@ const CATS = [
 ];
 const SILHOUETTE_IMG = "assets/cats/hidden_cat_silhouette.png";
 
+function getCatName(catId) {
+  if (state.catNames[catId]) return state.catNames[catId];
+  const cat = CATS.find(function (c) {
+    return c.id === catId;
+  });
+  return cat.name;
+}
+
 function renderBook() {
   document.getElementById("discoveredCount").textContent = state.discovered.length;
   document.getElementById("totalCount").textContent = CATS.length;
@@ -168,7 +180,7 @@ function renderBook() {
     return (
       '<div class="' + classes + '"' + onclick + ">" +
       '<img src="' + (found ? cat.img : SILHOUETTE_IMG) + '" alt="" />' +
-      '<div class="book-entry-name">' + (found ? cat.name : "？？？") + "</div>" +
+      '<div class="book-entry-name">' + (found ? getCatName(cat.id) : "？？？") + "</div>" +
       "</div>"
     );
   }).join("");
@@ -179,10 +191,7 @@ function renderBook() {
 
 function selectMainCat(catId) {
   if (catId === state.mainCatId) return;
-  const cat = CATS.find(function (c) {
-    return c.id === catId;
-  });
-  if (!confirm(cat.name + "をメインのねこにする？")) return;
+  if (!confirm(getCatName(catId) + "をメインのねこにする？")) return;
   state.mainCatId = catId;
   save();
   render();
@@ -213,7 +222,7 @@ function tryEncounter() {
   render();
 
   document.getElementById("foundCatImage").src = cat.img;
-  document.getElementById("foundCatName").textContent = cat.name;
+  document.getElementById("foundCatName").textContent = getCatName(cat.id);
   document.getElementById("catFoundModal").classList.add("open");
 }
 
@@ -282,9 +291,10 @@ function playWithToy(toyId) {
 }
 
 function renameCat() {
-  const newName = prompt("ねこのなまえをおしえてね（8文字まで）", state.name);
+  const currentName = getCatName(state.mainCatId);
+  const newName = prompt("ねこのなまえをおしえてね（8文字まで）", currentName);
   if (!newName || newName.trim() === "") return;
-  state.name = newName.trim().slice(0, 8);
+  state.catNames[state.mainCatId] = newName.trim().slice(0, 8);
   save();
   render();
 }
