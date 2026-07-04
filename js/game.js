@@ -122,6 +122,31 @@ function showMessage(text) {
   document.getElementById("message").textContent = text;
 }
 
+const HINTS = [
+  "ごはんを食べると体力が少し回復するよ",
+  "おふろに入ると清潔になるよ",
+  "おなかがすくと気分が下がっちゃうよ",
+  "体が汚れると気分が下がっちゃうよ",
+  "体力がないと、散歩や遊びができないよ",
+  "散歩すると体力とおなかが減っちゃうよ",
+  "散歩をすると新しい猫に出会えるかも",
+  "遊ぶと気分がよくなるよ",
+  "遊んでいると新しいおもちゃが見つかることがあるよ",
+  "お世話をするとレベルアップするよ",
+  "レベルが上がると大人の猫に成長するよ",
+  "図鑑で発見した猫はメインの猫にできるよ",
+];
+let currentHintIndex = -1;
+
+function showRandomHint() {
+  let index = Math.floor(Math.random() * HINTS.length);
+  while (index === currentHintIndex) {
+    index = Math.floor(Math.random() * HINTS.length);
+  }
+  currentHintIndex = index;
+  document.getElementById("hintText").textContent = HINTS[index];
+}
+
 function tick() {
   state.hunger = clamp(state.hunger - 1);
   state.clean = clamp(state.clean - 1);
@@ -131,6 +156,7 @@ function tick() {
   }
   save();
   render();
+  showRandomHint();
 }
 
 const CARE_MESSAGES = {
@@ -458,10 +484,6 @@ function renameCat() {
   render();
 }
 
-function goHome() {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
 function resetGame() {
   if (!confirm("さいしょからやりなおす？（いままでのきろくはきえます）")) {
     return;
@@ -477,4 +499,5 @@ function resetGame() {
 
 load();
 render();
+showRandomHint();
 setInterval(tick, 20000);

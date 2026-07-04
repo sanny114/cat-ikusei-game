@@ -488,15 +488,9 @@ button {
 
 .bottom-nav {
   margin-top: 12px;
-  padding: 8px 16px 4px;
-  min-height: 58px;
-  border: 3px solid var(--ink);
-  border-radius: 24px;
-  background: rgba(255, 250, 231, 0.88);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  box-shadow: 4px 4px 0 var(--shadow);
+  gap: 12px;
 }
 
 .bottom-icon-btn {
@@ -505,6 +499,7 @@ button {
   padding: 0;
   width: 46px;
   height: 46px;
+  flex-shrink: 0;
   cursor: pointer;
 }
 
@@ -515,30 +510,23 @@ button {
   display: block;
 }
 
-.bottom-center-doodle {
+.hint-card {
   flex: 1;
-  min-height: 42px;
+  min-height: 58px;
+  padding: 8px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  background: rgba(255, 250, 231, 0.88);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  box-shadow: 4px 4px 0 var(--shadow);
 }
 
-.yarn-line {
-  width: 44px;
-  height: 44px;
-  color: transparent;
-  background-image: url("../assets_optimized/actions/play_yarn.webp");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-}
-
-.paw-trail {
-  font-size: 20px;
+.hint-text {
+  font-size: 13px;
   color: var(--soft-ink);
-  letter-spacing: 5px;
-  transform: translateY(-2px);
+  white-space: nowrap;
 }
 
 /* 図鑑モーダル */
