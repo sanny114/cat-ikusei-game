@@ -526,7 +526,7 @@ button {
 
 .hint-text {
   font-size: 13px;
-  color: var(--soft-ink);
+  color: var(--ink);
   text-align: center;
 }
 
