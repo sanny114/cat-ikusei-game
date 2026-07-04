@@ -512,6 +512,7 @@ button {
 
 .hint-card {
   flex: 1;
+  min-width: 0;
   min-height: 58px;
   padding: 8px 16px;
   border: 3px solid var(--ink);
@@ -526,7 +527,7 @@ button {
 .hint-text {
   font-size: 13px;
   color: var(--soft-ink);
-  white-space: nowrap;
+  text-align: center;
 }
 
 /* 図鑑モーダル */
