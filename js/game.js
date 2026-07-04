@@ -2,8 +2,18 @@
 
 const SAVE_KEY = "catGameSave";
 const EXP_PER_LEVEL = 20; // 次のレベルまで level × 20
+const KITTEN_UNTIL_LEVEL = 3;
+const HAPPY_REACTION_MS = 3500;
 
 let state = defaultState();
+let happyReactionUntil = 0;
+
+function defaultCatProgress() {
+  return {
+    level: 1,
+    exp: 0,
+  };
+}
 
 function defaultState() {
   return {
@@ -17,6 +27,9 @@ function defaultState() {
     toys: ["yarn"],
     mainCatId: "milk",
     catNames: {},
+    catProgress: {
+      milk: defaultCatProgress(),
+    },
   };
 }
 
@@ -33,17 +46,54 @@ function load() {
   if (data) {
     const saved = JSON.parse(data);
     state = Object.assign(defaultState(), saved);
+    if (!state.catProgress) {
+      state.catProgress = {};
+    }
+    if (!saved.catProgress) {
+      state.catProgress.milk = {
+        level: saved.level || 1,
+        exp: saved.exp || 0,
+      };
+    }
     if (saved.name && !saved.catNames) {
       state.catNames[state.mainCatId] = saved.name;
     }
   }
 }
 
+function getCatProgress(catId) {
+  const id = catId || state.mainCatId;
+  if (!state.catProgress) {
+    state.catProgress = {};
+  }
+  if (!state.catProgress[id]) {
+    state.catProgress[id] = defaultCatProgress();
+  }
+  return state.catProgress[id];
+}
+
+function currentLevel() {
+  return getCatProgress().level;
+}
+
+function currentExp() {
+  return getCatProgress().exp;
+}
+
 function expToNext() {
-  return state.level * EXP_PER_LEVEL;
+  return currentLevel() * EXP_PER_LEVEL;
+}
+
+function hasLowCareStatus() {
+  return state.hunger < 30 || state.clean < 30 || state.energy < 30;
+}
+
+function isSadMood() {
+  return hasLowCareStatus() || state.mood < 30;
 }
 
 function moodLabel() {
+  if (isSadMood()) return "しょんぼり";
   if (state.mood >= 70) return "ごきげん";
   if (state.mood >= 30) return "ふつう";
   return "しょんぼり";
@@ -51,9 +101,9 @@ function moodLabel() {
 
 function render() {
   document.getElementById("catName").textContent = getCatName(state.mainCatId);
-  document.getElementById("level").textContent = state.level;
+  document.getElementById("level").textContent = currentLevel();
   document.getElementById("expBar").style.width =
-    Math.round((state.exp / expToNext()) * 100) + "%";
+    Math.round((currentExp() / expToNext()) * 100) + "%";
   document.getElementById("mood").textContent = moodLabel();
 
   document.getElementById("hungerBar").style.width = state.hunger + "%";
@@ -63,10 +113,7 @@ function render() {
   document.getElementById("energyBar").style.width = state.energy + "%";
   document.getElementById("energyText").textContent = state.energy;
 
-  const mainCat = CATS.find(function (cat) {
-    return cat.id === state.mainCatId;
-  });
-  document.getElementById("mainCatImage").src = mainCat.img;
+  document.getElementById("mainCatImage").src = getMainCatImage();
 
   renderBook();
 }
@@ -79,7 +126,7 @@ function tick() {
   state.hunger = clamp(state.hunger - 1);
   state.clean = clamp(state.clean - 1);
   state.energy = clamp(state.energy + 2);
-  if (state.hunger < 30 || state.clean < 30) {
+  if (hasLowCareStatus()) {
     state.mood = clamp(state.mood - 1);
   }
   save();
@@ -99,21 +146,28 @@ function randomMessage(type) {
 }
 
 function gainExp(amount) {
-  state.exp += amount;
+  const progress = getCatProgress();
+  progress.exp += amount;
   let leveledUp = false;
-  while (state.exp >= expToNext()) {
-    state.exp -= expToNext();
-    state.level += 1;
+  while (progress.exp >= expToNext()) {
+    progress.exp -= expToNext();
+    progress.level += 1;
     leveledUp = true;
   }
   return leveledUp;
 }
 
+function startHappyReaction() {
+  happyReactionUntil = Date.now() + HAPPY_REACTION_MS;
+  setTimeout(render, HAPPY_REACTION_MS);
+}
+
 function finishCare(type, exp) {
   const leveledUp = gainExp(exp);
+  startHappyReaction();
   showMessage(
     leveledUp
-      ? "レベルアップ！レベル" + state.level + "になったよ！"
+      ? "レベルアップ！レベル" + currentLevel() + "になったよ！"
       : randomMessage(type)
   );
   save();
@@ -150,21 +204,122 @@ function care(type) {
 }
 
 const CATS = [
-  { id: "milk", name: "ミルク", img: "assets/cats/main_cat.png" },
-  { id: "gray_tabby", name: "グレーのトラねこ", img: "assets/cats/gray_tabby_cat.png" },
-  { id: "white_fluffy", name: "まっしろもふもふ", img: "assets/cats/white_fluffy_cat.png" },
-  { id: "brown_tabby", name: "茶トラ", img: "assets/cats/brown_tabby_cat.png" },
-  { id: "black", name: "黒ねこ", img: "assets/cats/black_cat.png" },
-  { id: "hachiware", name: "ハチワレ", img: "assets/cats/hachiware_cat.png" },
+  {
+    id: "milk",
+    name: "ミルク",
+    img: "assets_optimized/cats/main_cat.webp",
+    variants: {
+      happy: "assets_variants/cats/milk/milk_happy.webp",
+      sad: "assets_variants/cats/milk/milk_sad.webp",
+      kitten: "assets_variants/cats/milk/milk_kitten.webp",
+      kittenHappy: "assets_variants/cats/milk/milk_kitten_happy.webp",
+      kittenSad: "assets_variants/cats/milk/milk_kitten_sad.webp",
+    },
+  },
+  {
+    id: "gray_tabby",
+    name: "グレーのトラねこ",
+    img: "assets_optimized/cats/gray_tabby_cat.webp",
+    variants: {
+      happy: "assets_variants/cats/gray_tabby/gray_tabby_happy.webp",
+      sad: "assets_variants/cats/gray_tabby/gray_tabby_sad.webp",
+      kitten: "assets_variants/cats/gray_tabby/gray_tabby_kitten.webp",
+      kittenHappy: "assets_variants/cats/gray_tabby/gray_tabby_kitten_happy.webp",
+      kittenSad: "assets_variants/cats/gray_tabby/gray_tabby_kitten_sad.webp",
+    },
+  },
+  {
+    id: "white_fluffy",
+    name: "まっしろもふもふ",
+    img: "assets_optimized/cats/white_fluffy_cat.webp",
+    variants: {
+      happy: "assets_variants/cats/white_fluffy/white_fluffy_happy.webp",
+      sad: "assets_variants/cats/white_fluffy/white_fluffy_sad.webp",
+      kitten: "assets_variants/cats/white_fluffy/white_fluffy_kitten.webp",
+      kittenHappy: "assets_variants/cats/white_fluffy/white_fluffy_kitten_happy_v2.webp",
+      kittenSad: "assets_variants/cats/white_fluffy/white_fluffy_kitten_sad.webp",
+    },
+  },
+  {
+    id: "brown_tabby",
+    name: "茶トラ",
+    img: "assets_optimized/cats/brown_tabby_cat.webp",
+    variants: {
+      happy: "assets_variants/cats/brown_tabby/brown_tabby_happy.webp",
+      sad: "assets_variants/cats/brown_tabby/brown_tabby_sad.webp",
+      kitten: "assets_variants/cats/brown_tabby/brown_tabby_kitten.webp",
+      kittenHappy: "assets_variants/cats/brown_tabby/brown_tabby_kitten_happy.webp",
+      kittenSad: "assets_variants/cats/brown_tabby/brown_tabby_kitten_sad.webp",
+    },
+  },
+  {
+    id: "black",
+    name: "黒ねこ",
+    img: "assets_optimized/cats/black_cat.webp",
+    variants: {
+      happy: "assets_variants/cats/black/black_happy.webp",
+      sad: "assets_variants/cats/black/black_sad.webp",
+      kitten: "assets_variants/cats/black/black_kitten.webp",
+      kittenHappy: "assets_variants/cats/black/black_kitten_happy.webp",
+      kittenSad: "assets_variants/cats/black/black_kitten_sad.webp",
+    },
+  },
+  {
+    id: "hachiware",
+    name: "ハチワレ",
+    img: "assets_optimized/cats/hachiware_cat.webp",
+    variants: {
+      happy: "assets_variants/cats/hachiware/hachiware_happy.webp",
+      sad: "assets_variants/cats/hachiware/hachiware_sad.webp",
+      kitten: "assets_variants/cats/hachiware/hachiware_kitten.webp",
+      kittenHappy: "assets_variants/cats/hachiware/hachiware_kitten_happy.webp",
+      kittenSad: "assets_variants/cats/hachiware/hachiware_kitten_sad.webp",
+    },
+  },
 ];
-const SILHOUETTE_IMG = "assets/cats/hidden_cat_silhouette.png";
+const SILHOUETTE_IMG = "assets_optimized/cats/hidden_cat_silhouette.webp";
+
+function getCat(catId) {
+  return CATS.find(function (cat) {
+    return cat.id === catId;
+  });
+}
 
 function getCatName(catId) {
   if (state.catNames[catId]) return state.catNames[catId];
-  const cat = CATS.find(function (c) {
-    return c.id === catId;
-  });
+  const cat = getCat(catId);
   return cat.name;
+}
+
+function getMainCatImage() {
+  const cat = getCat(state.mainCatId) || CATS[0];
+  const variants = cat.variants || {};
+  const isHappyReaction = Date.now() < happyReactionUntil;
+  const isKitten = currentLevel() < KITTEN_UNTIL_LEVEL;
+
+  if (isKitten) {
+    if (isSadMood() && variants.kittenSad) {
+      return variants.kittenSad;
+    }
+
+    if (isHappyReaction && variants.kittenHappy) {
+      return variants.kittenHappy;
+    }
+
+    if (variants.kitten) {
+      return variants.kitten;
+    }
+  }
+
+  if (isSadMood() && variants.sad) {
+    return variants.sad;
+  }
+
+  if (isHappyReaction && variants.happy) {
+    return variants.happy;
+  }
+
+  return cat.img;
 }
 
 function renderBook() {
@@ -192,6 +347,7 @@ function renderBook() {
 function selectMainCat(catId) {
   if (catId === state.mainCatId) return;
   if (!confirm(getCatName(catId) + "をメインのねこにする？")) return;
+  getCatProgress(catId);
   state.mainCatId = catId;
   save();
   render();
@@ -206,7 +362,7 @@ function closeBook() {
 }
 
 function encounterChance() {
-  return Math.min(0.25 + state.level * 0.02, 0.5);
+  return Math.min(0.25 + currentLevel() * 0.02, 0.5);
 }
 
 function tryEncounter() {
@@ -218,6 +374,7 @@ function tryEncounter() {
 
   const cat = hidden[Math.floor(Math.random() * hidden.length)];
   state.discovered.push(cat.id);
+  getCatProgress(cat.id);
   save();
   render();
 
@@ -234,10 +391,10 @@ function closeCatFound() {
 }
 
 const TOYS = [
-  { id: "yarn", name: "毛糸玉", mood: 15, img: "assets/actions/play_yarn.png" },
-  { id: "teaser", name: "ねこじゃらし", mood: 20, img: "assets/actions/toy_teaser.png" },
-  { id: "ball", name: "ボール", mood: 20, img: "assets/actions/toy_ball.png" },
-  { id: "mouse", name: "ぬいぐるみ", mood: 25, img: "assets/actions/toy_mouse.png" },
+  { id: "yarn", name: "毛糸玉", mood: 15, img: "assets_optimized/actions/play_yarn.webp" },
+  { id: "teaser", name: "ねこじゃらし", mood: 20, img: "assets_optimized/actions/toy_teaser.webp" },
+  { id: "ball", name: "ボール", mood: 20, img: "assets_optimized/actions/toy_ball.webp" },
+  { id: "mouse", name: "ぬいぐるみ", mood: 25, img: "assets_optimized/actions/toy_mouse.webp" },
 ];
 const TOY_DROP_RATE = 0.3;
 

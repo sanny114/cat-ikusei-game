@@ -528,7 +528,7 @@ button {
   width: 44px;
   height: 44px;
   color: transparent;
-  background-image: url("../assets/actions/play_yarn.png");
+  background-image: url("../assets_optimized/actions/play_yarn.webp");
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
