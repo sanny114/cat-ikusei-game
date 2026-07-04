@@ -7,6 +7,7 @@ const HAPPY_REACTION_MS = 3500;
 
 let state = defaultState();
 let happyReactionUntil = 0;
+let happyReactionCatId = null;
 
 function defaultCatProgress() {
   return {
@@ -50,7 +51,7 @@ function load() {
       state.catProgress = {};
     }
     if (!saved.catProgress) {
-      state.catProgress.milk = {
+      state.catProgress[state.mainCatId] = {
         level: saved.level || 1,
         exp: saved.exp || 0,
       };
@@ -95,8 +96,7 @@ function isSadMood() {
 function moodLabel() {
   if (isSadMood()) return "しょんぼり";
   if (state.mood >= 70) return "ごきげん";
-  if (state.mood >= 30) return "ふつう";
-  return "しょんぼり";
+  return "ふつう";
 }
 
 function render() {
@@ -158,6 +158,7 @@ function gainExp(amount) {
 }
 
 function startHappyReaction() {
+  happyReactionCatId = state.mainCatId;
   happyReactionUntil = Date.now() + HAPPY_REACTION_MS;
   setTimeout(render, HAPPY_REACTION_MS);
 }
@@ -294,7 +295,8 @@ function getCatName(catId) {
 function getMainCatImage() {
   const cat = getCat(state.mainCatId) || CATS[0];
   const variants = cat.variants || {};
-  const isHappyReaction = Date.now() < happyReactionUntil;
+  const isHappyReaction =
+    happyReactionCatId === state.mainCatId && Date.now() < happyReactionUntil;
   const isKitten = currentLevel() < KITTEN_UNTIL_LEVEL;
 
   if (isKitten) {
@@ -466,6 +468,8 @@ function resetGame() {
   }
   localStorage.removeItem(SAVE_KEY);
   state = defaultState();
+  happyReactionUntil = 0;
+  happyReactionCatId = null;
   save();
   render();
   showMessage("あたらしいねことのせいかつがはじまるよ！");
